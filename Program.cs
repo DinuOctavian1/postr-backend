@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using Postr.Data;
 using Postr.Services;
 using Postr.Services.Implementation;
 
@@ -11,6 +13,11 @@ builder.Services.AddTransient<IPostGeneratorService, OpenAIPostService>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddDbContext<PostrDBContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+
+});
 
 var app = builder.Build();
 

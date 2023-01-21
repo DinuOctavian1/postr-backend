@@ -8,8 +8,10 @@ namespace Postr.Models
         public int Id { get; set; }
 
         [Required]
-        [MaxLength(50)]
+        [MaxLength(20)]
         public string Name { get; set; }
+
+        [Required]
         public ICollection<Post> Posts { get; set; }
     }
 }
