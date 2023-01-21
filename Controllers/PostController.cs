@@ -33,7 +33,7 @@ namespace Postr.Controllers
 
         // POST api/<PostController>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] PostViewModel model)
+        public async Task<IActionResult> PostAsync([FromBody] PostViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -47,7 +47,7 @@ namespace Postr.Controllers
                 return BadRequest(result);
             }
 
-            return BadRequest("Somethin went wrong");
+            return BadRequest("Something went wrong");
         }
 
         // PUT api/<PostController>/5

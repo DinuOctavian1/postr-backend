@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Postr.Models;
 
 namespace Postr.Data
 {
-    public class PostrDBContext: DbContext
+    public class PostrDBContext: IdentityDbContext<IdentityUser>
     {
         public PostrDBContext(DbContextOptions<PostrDBContext> options) : base(options)
         {

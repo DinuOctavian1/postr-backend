@@ -7,7 +7,7 @@ namespace Postr.Models
         public int Id { get; set; }
 
         [Required]
-        [MaxLength(400)]
+        [MaxLength(300)]
         public string Text { get; set; }
 
         [Required]

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Postr.Data;
 using Postr.Services;
@@ -18,6 +19,7 @@ builder.Services.AddDbContext<PostrDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 
 });
+builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<PostrDBContext>();
 
 var app = builder.Build();
 
