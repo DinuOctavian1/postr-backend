@@ -1,9 +1,10 @@
-﻿using Postr.Models;
+﻿using Postr.RequestModels;
+using Postr.ResponseModels;
 
 namespace Postr.Services
 {
     public interface IPostGeneratorService
     {
-        Task<PostResponseModel> GeneratePost(string input);
+        Task<PostResponseModel> GeneratePostAsync(PostRequestModel model);
     }
 }

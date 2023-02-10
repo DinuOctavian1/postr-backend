@@ -2,7 +2,8 @@
 using OpenAI.GPT3.Interfaces;
 using OpenAI.GPT3.Managers;
 using OpenAI.GPT3.ObjectModels.RequestModels;
-using Postr.Models;
+using Postr.RequestModels;
+using Postr.ResponseModels;
 
 namespace Postr.Services.Implementation
 {
@@ -10,7 +11,7 @@ namespace Postr.Services.Implementation
     {
         private readonly IConfiguration _configuration;
         private readonly IOpenAIService _openAIService;
-        private const string OpenAIModelID = "text-ada-001";
+        private const string OpenAIModelID = "text-babbage-001";
 
         public OpenAIPostService(IConfiguration configuration)
         {
@@ -22,12 +23,12 @@ namespace Postr.Services.Implementation
             _openAIService.SetDefaultModelId(OpenAIModelID);
         }
 
-        public async Task<PostResponseModel> GeneratePost(string input)
+        public async Task<PostResponseModel> GeneratePostAsync(PostRequestModel model)
         {
             var completionResult = await _openAIService.Completions.CreateCompletion(new CompletionCreateRequest()
             {
-                Prompt = input,
-                MaxTokens = 20
+                Prompt = "Generate a post on the" + model.SocialPlatform + " about " + model.PostDescription,
+                MaxTokens = 100,
             });
 
             if (completionResult.Successful)

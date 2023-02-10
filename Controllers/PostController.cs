@@ -1,14 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Postr.Models;
+using Postr.RequestModels;
 using Postr.Services;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Postr.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class PostController : ControllerBase
+    public class PostController : BaseApiController
     {
         private readonly IPostGeneratorService _postGeneratorService;
 
@@ -32,12 +30,12 @@ namespace Postr.Controllers
         }
 
         // POST api/<PostController>
-        [HttpPost]
-        public async Task<IActionResult> PostAsync([FromBody] PostViewModel model)
+        [HttpPost("Generate")]
+        public async Task<IActionResult> PostAsync([FromBody] PostRequestModel model)
         {
             if (ModelState.IsValid)
             {
-                var result = await _postGeneratorService.GeneratePost(model.Input);
+                var result = await _postGeneratorService.GeneratePostAsync(model);
 
                 if (result.IsSuccess)
                 {
