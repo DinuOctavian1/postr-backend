@@ -11,8 +11,8 @@ namespace Postr.Services.Implementation
     {
         private readonly IConfiguration _configuration;
         private readonly IOpenAIService _openAIService;
-        private const string OpenAIModelID = "text-babbage-001";
-
+        private const string OpenAIModelID = "text-davinci-003";
+        //private const string OpenAIModelID = "gpt-3.5-turbo";
         public OpenAIPostService(IConfiguration configuration)
         {
             _configuration = configuration;
@@ -27,9 +27,14 @@ namespace Postr.Services.Implementation
         {
             var completionResult = await _openAIService.Completions.CreateCompletion(new CompletionCreateRequest()
             {
-                Prompt = "Generate a post on the" + model.SocialPlatform + " about " + model.PostDescription,
+                Prompt = $"As a social media manager, generate a post for {model.SocialPlatform} " +
+                $"about {model.ProductDescription}. The focus of the post should be to highlight {model.PostDescription}. " +
+                $" The objective of the post is {model.Objective}",
                 MaxTokens = 100,
+                Temperature = 0.9f,
             });
+
+
 
             if (completionResult.Successful)
             {
@@ -45,7 +50,7 @@ namespace Postr.Services.Implementation
                 return new PostResponseModel
                 {
                     IsSuccess = false,
-                    Errors = new List<string>() { completionResult?.Error?.Message ?? "Unknown error!"}
+                    Errors = new List<string>() { completionResult?.Error?.Message ?? "Unknown error!" }
                 };
                 //Console.WriteLine($"{completionResult.Error.Code}: {completionResult.Error.Message}");
             }
