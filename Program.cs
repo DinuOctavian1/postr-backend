@@ -3,17 +3,12 @@ using Postr;
 using Postr.Configurations;
 using Postr.Data;
 using Postr.Models;
-using Postr.Services;
-using Postr.Services.Implementation;
 
 var builder = WebApplication.CreateBuilder(args);
 {
     builder.Services.AddControllers();
     builder.Services.AddCors();
     builder.Services.AddAutoMapper(typeof(MapperInitializer));
-
-
-    builder.Services.AddTransient<IPostGeneratorService, OpenAIPostService>(); 
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
@@ -22,7 +17,29 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.ConfigureDB(builder.Configuration);
     builder.Services.AddDependencyInjection();
 
-    builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<PostrDBContext>();
+    builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<PostrDBContext>()
+          .AddDefaultTokenProviders();
+
+    builder.Services.Configure<IdentityOptions>(opts => {
+        opts.SignIn.RequireConfirmedEmail = true;
+        opts.User.RequireUniqueEmail = true;
+        /* opts.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyz";
+         opts.Password.RequiredLength = 8;
+         opts.Password.RequireLowercase = true;*/
+    });
+
+
+    //TODO: Change password options
+    builder.Services.Configure<IdentityOptions>(options =>
+    {
+        // Default Password settings.
+        options.Password.RequireDigit = false;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequiredLength = 5;
+        options.Password.RequiredUniqueChars = 0;
+    });
 
     builder.Services.AddAuthentication()
         .AddFacebook(facebookOptions =>

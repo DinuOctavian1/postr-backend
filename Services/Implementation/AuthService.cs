@@ -31,7 +31,6 @@ namespace Postr.Services.Implementation
                 return new AuthResponse
                 {
                     IsSuccess = false,
-                    Message = "Confirmed password does not match the password",
                     Error =  "Confirmed password does not match the password" 
                 };
             }

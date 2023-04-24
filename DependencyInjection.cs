@@ -21,6 +21,8 @@ namespace Postr
         public static IServiceCollection AddDependencyInjection(this IServiceCollection services)
         {
             services.AddTransient<IPostGeneratorService, OpenAIPostService>();
+            services.AddTransient<IMailService, SendGridMailService>();
+            services.AddScoped<IAuthService, AuthService>();
 
             return services;
         }

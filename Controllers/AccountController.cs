@@ -17,7 +17,7 @@ namespace Postr.Controllers
             _userManager = userManager;
         }
 
-        [HttpGet("facebook-login")]
+        /*[HttpGet("facebook-login")]
         public IActionResult FacebookLogin()
         {
             var redirect = Url.Action("FacebookCallback", "Account");
@@ -66,7 +66,7 @@ namespace Postr.Controllers
                 }
             }
             return Ok(new { access_token = "" });
-        }
+        }*/
 
     }
 }
