@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Postr;
+using Postr.Configurations;
 using Postr.Data;
 using Postr.Models;
 using Postr.Services;
@@ -9,11 +10,10 @@ var builder = WebApplication.CreateBuilder(args);
 {
     builder.Services.AddControllers();
     builder.Services.AddCors();
+    builder.Services.AddAutoMapper(typeof(MapperInitializer));
 
-// Add services to the container.
 
-builder.Services.AddControllers();
-builder.Services.AddTransient<IPostGeneratorService, OpenAIPostService>(); 
+    builder.Services.AddTransient<IPostGeneratorService, OpenAIPostService>(); 
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
