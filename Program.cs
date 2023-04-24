@@ -1,39 +1,64 @@
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using Postr;
 using Postr.Data;
+using Postr.Models;
 using Postr.Services;
 using Postr.Services.Implementation;
 
 var builder = WebApplication.CreateBuilder(args);
+{
+    builder.Services.AddControllers();
+    builder.Services.AddCors();
 
 // Add services to the container.
 
 builder.Services.AddControllers();
 builder.Services.AddTransient<IPostGeneratorService, OpenAIPostService>(); 
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<PostrDBContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
 
-});
-builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<PostrDBContext>();
+    
+    builder.Services.ConfigureDB(builder.Configuration);
+    builder.Services.AddDependencyInjection();
 
-var app = builder.Build();
+    builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<PostrDBContext>();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    builder.Services.AddAuthentication()
+        .AddFacebook(facebookOptions =>
+        {
+            facebookOptions.AppId = builder.Configuration["FacebookAppId"];
+            facebookOptions.AppSecret = builder.Configuration["FacebookAppSecret"];
+        });
+
+    builder.Services.AddHttpClient();
 }
 
-app.UseHttpsRedirection();
 
-app.UseAuthorization();
 
-app.MapControllers();
+var app = builder.Build();
+{
+    // Configure the HTTP request pipeline. 
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
 
-app.Run();
+    app.UseCors(options => options
+                  .WithOrigins("http://localhost:3000")
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .AllowCredentials());
+
+    app.UseHttpsRedirection();
+
+    app.UseAuthentication();
+
+    app.UseAuthorization();
+
+    app.MapControllers();
+
+    app.Run();
+}
+

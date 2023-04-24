@@ -10,8 +10,8 @@ namespace Postr.Services.Implementation
     {
         private readonly IConfiguration _configuration;
         private readonly IOpenAIService _openAIService;
-        private const string OpenAIModelID = "text-ada-001";
-
+        private const string OpenAIModelID = "text-davinci-003";
+        //private const string OpenAIModelID = "gpt-3.5-turbo";
         public OpenAIPostService(IConfiguration configuration)
         {
             _configuration = configuration;
@@ -30,6 +30,8 @@ namespace Postr.Services.Implementation
                 MaxTokens = 20
             });
 
+
+
             if (completionResult.Successful)
             {
                 return new PostResponseModel
@@ -44,10 +46,12 @@ namespace Postr.Services.Implementation
                 return new PostResponseModel
                 {
                     IsSuccess = false,
-                    Errors = new List<string>() { completionResult?.Error?.Message ?? "Unknown error!"}
+                    Errors = new List<string>() { completionResult?.Error?.Message ?? "Unknown error!" }
                 };
                 //Console.WriteLine($"{completionResult.Error.Code}: {completionResult.Error.Message}");
             }
         }
+
+       
     }
 }
