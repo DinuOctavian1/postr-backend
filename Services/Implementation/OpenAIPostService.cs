@@ -2,7 +2,8 @@
 using OpenAI.GPT3.Interfaces;
 using OpenAI.GPT3.Managers;
 using OpenAI.GPT3.ObjectModels.RequestModels;
-using Postr.Models;
+using Postr.RequestModels;
+using Postr.ResponseModels;
 
 namespace Postr.Services.Implementation
 {
@@ -22,12 +23,15 @@ namespace Postr.Services.Implementation
             _openAIService.SetDefaultModelId(OpenAIModelID);
         }
 
-        public async Task<PostResponseModel> GeneratePost(string input)
+        public async Task<PostResponseModel> GeneratePostAsync(PostRequestModel model)
         {
             var completionResult = await _openAIService.Completions.CreateCompletion(new CompletionCreateRequest()
             {
-                Prompt = input,
-                MaxTokens = 20
+                Prompt = $"As a social media manager, generate a post for {model.SocialPlatform} " +
+                $"about {model.ProductDescription}. The focus of the post should be to highlight {model.PostDescription}. " +
+                $" The objective of the post is {model.Objective}",
+                MaxTokens = 100,
+                Temperature = 0.9f,
             });
 
 
