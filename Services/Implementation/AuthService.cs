@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
+using Newtonsoft.Json.Linq;
 using Postr.Configurations;
 using Postr.DTO;
 using Postr.Models;
@@ -24,6 +25,39 @@ namespace Postr.Services.Implementation
             _mailService = mailService;
         }
 
+        public async Task<AuthResponse> CofirmEmailAsync(EmailConfrimationRequestModel model)
+        {
+            var user = await _userManager.FindByIdAsync(model.UserId);
+            if (user == null)
+            {
+               return new AuthResponse
+               {
+                   IsSuccess = false,
+                   Error = "User not found"
+               };
+            }
+
+            var decodedToken = WebEncoders.Base64UrlDecode(model.Token);
+            string normalToken = Encoding.UTF8.GetString(decodedToken);
+            var result = await _userManager.ConfirmEmailAsync(user, normalToken);
+
+            if (result.Succeeded)
+            {
+                return new AuthResponse
+                {
+                    IsSuccess = true,
+                    Message = "Email confirmed successfully",
+                    User = _mapper.Map<UserDTO>(user)
+                };
+            }
+
+            return new AuthResponse
+            {
+                IsSuccess = false,
+                Error = "Email cannot be confirmed"
+            };
+        }
+
         public async Task<AuthResponse> RegisterUserAsync(SignupDTO model)
         {
             if (model.Password != model.ConfirmedPassword)
@@ -36,7 +70,9 @@ namespace Postr.Services.Implementation
             }
 
             var user = _mapper.Map<User>(model);
+
             var result = await _userManager.CreateAsync(user, model.Password);
+
             if (!result.Succeeded)
             {
                 return new AuthResponse

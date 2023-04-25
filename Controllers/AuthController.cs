@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Postr.DTO;
 using Postr.ResponseModels;
-using Postr.Services.Implementation;
+using Postr.Services;
 
 namespace Postr.Controllers
 {
@@ -31,5 +31,24 @@ namespace Postr.Controllers
 
             return BadRequest();
         }
+
+
+        [HttpPost("confirm-email")]
+        public async Task<ActionResult> ConfirmEmail([FromBody] EmailConfrimationRequestModel model)
+        {
+            if(ModelState.IsValid) 
+            { 
+                var result = await _authService.CofirmEmailAsync(model);
+                if (result.IsSuccess)
+                {
+                    return Ok(result.Message);
+                }
+
+                return BadRequest(result.Error);
+            }
+
+            return BadRequest("Invalid payload");
+        }
+
     }
 }
