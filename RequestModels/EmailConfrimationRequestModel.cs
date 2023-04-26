@@ -1,4 +1,4 @@
-﻿namespace Postr.ResponseModels
+﻿namespace Postr.RequestModels
 {
     public class EmailConfrimationRequestModel
     {

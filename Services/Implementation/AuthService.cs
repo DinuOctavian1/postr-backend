@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
-using Newtonsoft.Json.Linq;
 using Postr.Configurations;
+using Postr.Constants;
 using Postr.DTO;
 using Postr.Models;
+using Postr.RequestModels;
 using Postr.ResponseModels;
 using System.Text;
 
@@ -16,6 +17,7 @@ namespace Postr.Services.Implementation
         private readonly IMapper _mapper;
         private readonly IConfiguration _config;
         private readonly IMailService _mailService;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public AuthService(UserManager<User> userManager, IMapper mapper, IConfiguration config, IMailService mailService)
         {
@@ -33,7 +35,7 @@ namespace Postr.Services.Implementation
                return new AuthResponse
                {
                    IsSuccess = false,
-                   Error = "User not found"
+                   Message = "User not found"
                };
             }
 
@@ -43,18 +45,27 @@ namespace Postr.Services.Implementation
 
             if (result.Succeeded)
             {
+                bool roleResult = await AssignRoleAsync(user, UserType.USER);
+                if (roleResult) 
+                { 
+                    return new AuthResponse
+                    {
+                        IsSuccess = true,
+                        Message = "Email confirmed successfully",
+                        Data = _mapper.Map<UserDTO>(user)
+                    };
+                }
                 return new AuthResponse
                 {
                     IsSuccess = true,
-                    Message = "Email confirmed successfully",
-                    User = _mapper.Map<UserDTO>(user)
+                    Message = "Unable to assign a role. Please contact support",
                 };
             }
 
             return new AuthResponse
             {
                 IsSuccess = false,
-                Error = "Email cannot be confirmed"
+                Message = "Email cannot be confirmed"
             };
         }
 
@@ -65,7 +76,7 @@ namespace Postr.Services.Implementation
                 return new AuthResponse
                 {
                     IsSuccess = false,
-                    Error =  "Confirmed password does not match the password" 
+                    Message =  "Confirmed password does not match the password" 
                 };
             }
 
@@ -78,7 +89,7 @@ namespace Postr.Services.Implementation
                 return new AuthResponse
                 {
                     IsSuccess = false,
-                    Error = result.Errors.Select(e => e.Description).First(),
+                    Message = result.Errors.Select(e => e.Description).First(),
                 };
             }
 
@@ -98,6 +109,27 @@ namespace Postr.Services.Implementation
                 Message = $"A link has been send to your address {user.Email}. Please confirm your email address!"
             };
 
+        }
+
+        private async Task<bool> AssignRoleAsync(User user, UserType userType)
+        {
+            var role = UserRoles.User;
+
+            switch (userType)
+            {
+                case UserType.ADMIN:
+                    role = UserRoles.Admin; 
+                    break;
+            }
+
+
+            if (!await _roleManager.RoleExistsAsync(role))
+            {
+                await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
+            }
+
+            var result = await _userManager.AddToRoleAsync(user, role);
+            return result.Succeeded;
         }
     }
 }

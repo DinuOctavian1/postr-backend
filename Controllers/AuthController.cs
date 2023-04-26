@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Postr.DTO;
+using Postr.RequestModels;
 using Postr.ResponseModels;
 using Postr.Services;
 
@@ -26,7 +27,7 @@ namespace Postr.Controllers
                     return Ok(response.Message);
                 }
 
-                return BadRequest(response.Error);
+                return BadRequest(response.Message);
             }
 
             return BadRequest();
@@ -44,7 +45,7 @@ namespace Postr.Controllers
                     return Ok(result.Message);
                 }
 
-                return BadRequest(result.Error);
+                return BadRequest(result.Message);
             }
 
             return BadRequest("Invalid payload");
