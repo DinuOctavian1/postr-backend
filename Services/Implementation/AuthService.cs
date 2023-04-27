@@ -18,13 +18,16 @@ namespace Postr.Services.Implementation
         private readonly IConfiguration _config;
         private readonly IMailService _mailService;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly ITokenService _tokenService;
 
-        public AuthService(UserManager<User> userManager, IMapper mapper, IConfiguration config, IMailService mailService)
+        public AuthService(UserManager<User> userManager, IMapper mapper, IConfiguration config, IMailService mailService, ITokenService tokenService, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _mapper = mapper;
             _config = config;
             _mailService = mailService;
+            _tokenService = tokenService;
+            _roleManager = roleManager;
         }
 
         public async Task<AuthResponse> CofirmEmailAsync(EmailConfrimationRequestModel model)
@@ -47,12 +50,14 @@ namespace Postr.Services.Implementation
             {
                 bool roleResult = await AssignRoleAsync(user, UserType.USER);
                 if (roleResult) 
-                { 
+                {
+                    string token = await _tokenService.GenerateJWTokenAsync(user);
+                    UserDTO userDTO = _mapper.Map<UserDTO>(user);
                     return new AuthResponse
                     {
                         IsSuccess = true,
-                        Message = "Email confirmed successfully",
-                        Data = _mapper.Map<UserDTO>(user)
+                        Message = token,
+                        Data = userDTO
                     };
                 }
                 return new AuthResponse

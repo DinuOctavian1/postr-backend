@@ -23,6 +23,7 @@ namespace Postr
             services.AddTransient<IPostGeneratorService, OpenAIPostService>();
             services.AddTransient<IMailService, SendGridMailService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddTransient<ITokenService, JwtService>();
 
             return services;
         }
