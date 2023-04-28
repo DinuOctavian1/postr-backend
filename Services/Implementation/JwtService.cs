@@ -49,5 +49,22 @@ namespace Postr.Services.Implementation
 
             return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
         }
+
+        public JwtSecurityToken GetValidatedToken(string jwt)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            tokenHandler.ValidateToken(jwt, new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidateAudience = true,
+                ValidIssuer = _config["Jwt:Issuer"],
+                ValidAudience = _config["Jwt:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:Key"])),
+            }, out SecurityToken validatedToken);
+
+            return (JwtSecurityToken)validatedToken;
+        }
     }
 }

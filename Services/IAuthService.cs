@@ -8,6 +8,8 @@ namespace Postr.Services
     public interface IAuthService
     {
         Task<AuthResponse> RegisterUserAsync(SignupDTO model);
-        Task<AuthResponse> CofirmEmailAsync(EmailConfrimationRequestModel model);
+        Task<AuthResponse> CofirmEmailAsync(EmailConfirmationRequestModel model);
+        Task<User> GetUserfromTokenAsync(string jwt);
+        Task<AuthResponse> LoginAsync(LoginDTO model);
     }
 }

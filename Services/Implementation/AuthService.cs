@@ -7,6 +7,7 @@ using Postr.DTO;
 using Postr.Models;
 using Postr.RequestModels;
 using Postr.ResponseModels;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
 namespace Postr.Services.Implementation
@@ -30,7 +31,7 @@ namespace Postr.Services.Implementation
             _roleManager = roleManager;
         }
 
-        public async Task<AuthResponse> CofirmEmailAsync(EmailConfrimationRequestModel model)
+        public async Task<AuthResponse> CofirmEmailAsync(EmailConfirmationRequestModel model)
         {
             var user = await _userManager.FindByIdAsync(model.UserId);
             if (user == null)
@@ -72,6 +73,54 @@ namespace Postr.Services.Implementation
                 IsSuccess = false,
                 Message = "Email cannot be confirmed"
             };
+        }
+
+        public async Task<User> GetUserfromTokenAsync(string jwt)
+        {
+            JwtSecurityToken token = _tokenService.GetValidatedToken(jwt);
+
+            if (token == null)
+                return null;
+
+            var username = token.Claims?.FirstOrDefault()?.Value;
+            if (username == null)
+                return null;
+
+            return await _userManager.FindByNameAsync(username);
+
+        }
+
+        public async Task<AuthResponse> LoginAsync(LoginDTO model)
+        {
+            User user = await _userManager.FindByEmailAsync(model.Email);
+            if(user == null)
+            {
+                return new AuthResponse
+                {
+                    IsSuccess = false,
+                    Message = "Login data is incorrect"
+                };
+            }
+
+            var result = await _userManager.CheckPasswordAsync(user, model.Password);
+            if (result == false) 
+            {
+                return new AuthResponse
+                {
+                    IsSuccess = false,
+                    Message = "Login data is incorrect"
+                };
+            }
+
+            string token = await _tokenService.GenerateJWTokenAsync(user);
+            return new AuthResponse
+            {
+                IsSuccess = true,
+                Message = token,
+                Data = _mapper.Map<UserDTO>(user)
+            };
+
+
         }
 
         public async Task<AuthResponse> RegisterUserAsync(SignupDTO model)

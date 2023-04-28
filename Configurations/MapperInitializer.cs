@@ -9,6 +9,7 @@ namespace Postr.Configurations
         public MapperInitializer() 
         { 
             CreateMap<SignupDTO, User>().ReverseMap();
+            CreateMap<UserDTO, User>().ReverseMap();
         }
     }
 }

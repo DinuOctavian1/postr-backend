@@ -1,8 +1,12 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using Postr;
 using Postr.Configurations;
 using Postr.Data;
+using Postr.Middelware;
 using Postr.Models;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 {
@@ -40,6 +44,34 @@ var builder = WebApplication.CreateBuilder(args);
         options.Password.RequiredLength = 5;
         options.Password.RequiredUniqueChars = 0;
     });
+    builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+        .AddCookie()
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters()
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                ValidAudience = builder.Configuration["Jwt:Audience"],
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+            };
+            options.Events = new JwtBearerEvents
+            {
+                OnMessageReceived = context =>
+                {
+                    context.Token = context.Request.Cookies["jwt"];
+                    return Task.CompletedTask;
+                }
+            };
+        });
 
     builder.Services.AddAuthentication()
         .AddFacebook(facebookOptions =>
@@ -55,6 +87,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
 {
+
     // Configure the HTTP request pipeline. 
     if (app.Environment.IsDevelopment())
     {
@@ -69,6 +102,9 @@ var app = builder.Build();
                   .AllowCredentials());
 
     app.UseHttpsRedirection();
+
+    app.UseMiddleware<JWTMiddleware>();
+
 
     app.UseAuthentication();
 
