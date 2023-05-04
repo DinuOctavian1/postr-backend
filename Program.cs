@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Postr;
 using Postr.Configurations;
 using Postr.Data;
 using Postr.Middelware;
@@ -17,7 +17,8 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 
-    
+    builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("EmailConfig"));
+
     builder.Services.ConfigureDB(builder.Configuration);
     builder.Services.AddDependencyInjection();
 

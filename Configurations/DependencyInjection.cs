@@ -4,7 +4,7 @@ using Postr.Services.Implementation;
 using Postr.Services;
 using Postr.Middelware;
 
-namespace Postr
+namespace Postr.Configurations
 {
     public static class DependencyInjection
     {
@@ -26,7 +26,7 @@ namespace Postr
             services.AddScoped<IAuthService, AuthService>();
             services.AddTransient<ITokenService, JwtService>();
             services.AddScoped<JWTMiddleware>();
-
+            
             return services;
         }
     }

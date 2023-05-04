@@ -154,9 +154,7 @@ namespace Postr.Services.Implementation
 
             string url = $"{_config["AppUrl"]}/confirm-email?userid={user.Id}&token={validEmailToken}";
 
-            string emailMessage = EmailServiceConfig.GetEmailConfirmationMessage(url);
-            await _mailService.SendEmailAsync(user.Email, EmailServiceConfig.confirmationEmailSubject, emailMessage);
-
+            await _mailService.SendEmailConfirmationEmailAsync(user.Email, url);
             return new AuthResponse
             {
                 IsSuccess = true,
