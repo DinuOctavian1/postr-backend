@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
-using Postr.Configurations;
 using Postr.Constants;
 using Postr.DTO;
 using Postr.Models;
