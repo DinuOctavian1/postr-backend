@@ -20,7 +20,7 @@ namespace Postr.Controllers
         }
 
         [HttpPost("signup")]
-        public async Task<ActionResult> SignupUserAsync([FromBody] SignupDTO model)
+        public async Task<ActionResult> SignupUser([FromBody] SignupDTO model)
         {
             if (ModelState.IsValid)
             {
@@ -53,7 +53,7 @@ namespace Postr.Controllers
                         SameSite = SameSiteMode.None,
                     });
 
-                    result.Message = "Email confirmed successfully";
+                    result.Message = "Email confirmed successfully! You are now logged in!";
                     return Ok(result);
                 }
 
@@ -127,7 +127,14 @@ namespace Postr.Controllers
 
             UserDTO userDto = _mapper.Map<UserDTO>(user);
 
-            return Ok(userDto);
+            AuthResponse response = new AuthResponse
+            {
+                IsSuccess = true,
+                Message = "User found",
+                Data = userDto
+            };
+
+            return Ok(response);
         }
     }
 }
