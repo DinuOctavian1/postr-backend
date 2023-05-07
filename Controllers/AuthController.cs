@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using OpenAI.GPT3.ObjectModels.ResponseModels;
 using Postr.DTO;
 using Postr.Models;
 using Postr.RequestModels;
@@ -96,6 +95,25 @@ namespace Postr.Controllers
 
 
             
+        }
+
+        [HttpGet("logout")]
+        public IActionResult Logout()
+        {
+
+            Response.Cookies.Delete("jwt", new CookieOptions
+            {
+                Secure = true,
+                HttpOnly = true,
+                SameSite = SameSiteMode.None
+            });
+
+            
+            return Ok(new AuthResponse
+            {
+                IsSuccess = true,
+                Message = "Logout successfull!",
+            });
         }
 
 
