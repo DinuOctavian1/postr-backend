@@ -1,13 +1,20 @@
 ﻿
+using System.ComponentModel.DataAnnotations;
+
 namespace Postr.RequestModels
 {
     public class PostRequestModel
     {
-        public string BusinessDescription { get; set; }
-        public string SocialPlatform { get; set; }
-        public string PostDescription { get; set; }
-        public string ProductDescription { get; set; }
+        [Required]
+        public string SocialMediaPlatform { get; set; }
 
-        public string Objective { get; set; }
+        [Required]
+        public string PostDescription { get; set; }
+
+        [Required]
+        public string PageCategories { get; set; }
+
+        [Required]
+        public string PageName { get; set; }
     }
 }

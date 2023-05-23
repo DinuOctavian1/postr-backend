@@ -27,11 +27,10 @@ namespace Postr.Services.Implementation
         {
             var completionResult = await _openAIService.Completions.CreateCompletion(new CompletionCreateRequest()
             {
-                Prompt = $"As a social media manager, generate a post for {model.SocialPlatform} " +
-                $"about {model.ProductDescription}. The focus of the post should be to highlight {model.PostDescription}. " +
-                $" The objective of the post is {model.Objective}",
+                Prompt = $"As a social media manager, generate a post for {model.PageCategories} categories on {model.PageName} page name" +
+                        $"using {model.SocialMediaPlatform}. The focus of the post should be to highlight {model.PostDescription}. ",
                 MaxTokens = 100,
-                Temperature = 0.9f,
+                Temperature = 0.4f,
             });
 
 
@@ -43,7 +42,7 @@ namespace Postr.Services.Implementation
                     IsSuccess = true,
                     Message = completionResult?.Choices.FirstOrDefault()?.Text
                 };
-                //Console.WriteLine(completionResult.Choices.FirstOrDefault());
+               
             }
             else
             {
@@ -52,7 +51,7 @@ namespace Postr.Services.Implementation
                     IsSuccess = false,
                     Errors = new List<string>() { completionResult?.Error?.Message ?? "Unknown error!" }
                 };
-                //Console.WriteLine($"{completionResult.Error.Code}: {completionResult.Error.Message}");
+                
             }
         }
 

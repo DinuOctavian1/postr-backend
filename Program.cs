@@ -18,13 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
 
     builder.Services.AddIdentityServices(builder.Configuration);
 
-   /* builder.Services.AddAuthentication()
-        .AddFacebook(facebookOptions =>
-        {
-            facebookOptions.AppId = builder.Configuration["FacebookAppId"];
-            facebookOptions.AppSecret = builder.Configuration["FacebookAppSecret"];
-        });*/
-
+   
     builder.Services.AddHttpClient();
 }
 
@@ -41,7 +35,7 @@ var app = builder.Build();
     }
 
     app.UseCors(options => options
-                  .WithOrigins("http://localhost:3000")
+                  .WithOrigins(builder.Configuration["AppUrl"])
                   .AllowAnyMethod()
                   .AllowAnyHeader()
                   .AllowCredentials());

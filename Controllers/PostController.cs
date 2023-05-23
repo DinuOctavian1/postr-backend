@@ -2,8 +2,6 @@
 using Postr.RequestModels;
 using Postr.Services;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace Postr.Controllers
 {
     public class PostController : BaseApiController
@@ -29,8 +27,8 @@ namespace Postr.Controllers
             return "value";
         }
 
-        // POST api/<PostController>
-        [HttpPost("Generate")]
+        
+        [HttpPost("generate")]
         public async Task<IActionResult> PostAsync([FromBody] PostRequestModel model)
         {
             if (ModelState.IsValid)
