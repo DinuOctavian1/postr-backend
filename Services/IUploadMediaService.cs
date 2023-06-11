@@ -2,6 +2,6 @@
 {
     public interface IUploadMediaService
     {
-        Task<string> GetUploadMediaPathAsync(IFormFile file);
+        Task<string> GetUploadMediaPathAsync(IFormFile file, string userId);
     }
 }

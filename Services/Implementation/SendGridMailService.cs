@@ -8,6 +8,7 @@ namespace Postr.Services.Implementation
     {
         private readonly IConfiguration _configuration;
         private readonly EmailConfig _emailConfig;
+        
 
         public SendGridMailService(IConfiguration configuration)
         {

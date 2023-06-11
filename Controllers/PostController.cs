@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Postr.Models;
 using Postr.RequestModels;
 using Postr.Services;
 
@@ -53,9 +54,16 @@ namespace Postr.Controllers
         [HttpPost("upload")]
         public async Task<IActionResult> UploadAsync([FromForm] UploadMediaRequestModel model)
         {
+            User user = HttpContext.Items["User"] as User;
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+
             if (ModelState.IsValid)
             {
-                var videoPath = await _uploadMediaService.GetUploadMediaPathAsync(model.Image);
+                var videoPath = await _uploadMediaService.GetUploadMediaPathAsync(model.Image, user.Id);
 
                 if (videoPath is null)
                 {
