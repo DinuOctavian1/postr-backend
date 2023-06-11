@@ -7,10 +7,13 @@ namespace Postr.Controllers
     public class PostController : BaseApiController
     {
         private readonly IPostGeneratorService _postGeneratorService;
+        private readonly IUploadMediaService _uploadMediaService;
 
-        public PostController(IPostGeneratorService postGeneratorService)
+        public PostController(IPostGeneratorService postGeneratorService, IUploadMediaService uploadMediaService)
         {
             _postGeneratorService = postGeneratorService;
+            _uploadMediaService = uploadMediaService;
+
         }
 
         // GET: api/<PostController>
@@ -44,6 +47,25 @@ namespace Postr.Controllers
             }
 
             return BadRequest("Something went wrong");
+        }
+
+
+        [HttpPost("upload")]
+        public async Task<IActionResult> UploadAsync([FromForm] UploadMediaRequestModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var videoPath = await _uploadMediaService.GetUploadMediaPathAsync(model.Image);
+
+                if (videoPath is null)
+                {
+                    return BadRequest("The quiz you have uploaded is not valid");
+                }
+
+                return Ok(videoPath);
+            }
+
+            return BadRequest("The file is corrupt");
         }
 
         // PUT api/<PostController>/5

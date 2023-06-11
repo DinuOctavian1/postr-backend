@@ -4,6 +4,7 @@ using Postr.Services.Implementation;
 using Postr.Services;
 using Postr.Middelware;
 
+
 namespace Postr.Extensions
 {
     public static class DependencyInjectionExtensions
@@ -23,6 +24,7 @@ namespace Postr.Extensions
         {
             services.AddTransient<IPostGeneratorService, OpenAIPostService>();
             services.AddTransient<IMailService, SendGridMailService>();
+            services.AddTransient<IUploadMediaService, AzureUploadMediaService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddTransient<ITokenService, JwtService>();
             services.AddScoped<JWTMiddleware>();
